@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-rootProject.name = "KotlinProjectTemplate"
+rootProject.name = "kotlin-inject-anvil-map-multibinding"
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         exclusiveContent {
             forRepository { google() }
@@ -50,4 +51,8 @@ develocity {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include(":app")
+// lint checks
+// sample
+include("runtime")
+include("compiler")
+include("samples:counter")
