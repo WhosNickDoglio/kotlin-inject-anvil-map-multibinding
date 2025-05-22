@@ -59,6 +59,7 @@ internal fun Project.configureSpotless(ktfmtVersion: String) {
                 ktfmt(ktfmtVersion).kotlinlangStyle()
                 trimTrailingWhitespace()
                 endWithNewline()
+                targetExclude("**/build/**/*")
                 licenseHeaderFile(file("$rootDir/spotless/spotless.kt"))
             }
         }
