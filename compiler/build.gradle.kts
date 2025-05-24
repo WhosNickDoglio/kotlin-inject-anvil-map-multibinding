@@ -8,6 +8,15 @@ plugins {
     alias(libs.plugins.burst)
 }
 
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            //            "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+            "com.google.devtools.ksp.KspExperimental"
+        )
+    }
+}
+
 dependencies {
     implementation(libs.auto.service.annotations)
     implementation(libs.kotlin.inject.anvil.compiler.utils)

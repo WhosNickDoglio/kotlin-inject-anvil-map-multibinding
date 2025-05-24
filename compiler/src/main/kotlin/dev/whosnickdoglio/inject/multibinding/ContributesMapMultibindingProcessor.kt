@@ -5,7 +5,6 @@
 package dev.whosnickdoglio.inject.multibinding
 
 import com.google.auto.service.AutoService
-import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
@@ -66,7 +65,6 @@ internal class ContributesMapMultibindingProcessor(
         return emptyList()
     }
 
-    @OptIn(KspExperimental::class)
     private fun KSClassDeclaration.toMultibinding(): Multibinding =
         Multibinding(
             origin = this,
@@ -87,7 +85,6 @@ internal class ContributesMapMultibindingProcessor(
                     .toList(),
         )
 
-    @OptIn(KspExperimental::class)
     private fun KSClassDeclaration.mapKey(): KSAnnotation =
         annotations.firstOrNull { annotation ->
             annotation.annotationType.resolve().declaration.isAnnotationPresent(MapKey::class)
