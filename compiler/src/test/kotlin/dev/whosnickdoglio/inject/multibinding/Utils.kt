@@ -4,11 +4,6 @@
  */
 @file:OptIn(ExperimentalCompilerApi::class)
 
-/*
- * Copyright (C) 2025 Nicholas Doglio
- * SPDX-License-Identifier: MIT
- */
-
 package dev.whosnickdoglio.inject.multibinding
 
 import assertk.Assert
