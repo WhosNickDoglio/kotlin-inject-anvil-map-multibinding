@@ -2,8 +2,16 @@
  * Copyright (C) 2025 Nicholas Doglio
  * SPDX-License-Identifier: MIT
  */
+@file:Suppress("JUnitMalformedDeclaration")
+@file:OptIn(ExperimentalCompilerApi::class)
+
+/*
+ * Copyright (C) 2025 Nicholas Doglio
+ * SPDX-License-Identifier: MIT
+ */
 package dev.whosnickdoglio.inject.multibinding
 
+import app.cash.burst.Burst
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
@@ -12,6 +20,7 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.tschuchort.compiletesting.KotlinCompilation
 import java.lang.String
+import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.valueParameters
 import me.tatarka.inject.annotations.IntoMap
@@ -21,17 +30,28 @@ import org.junit.Test
 import software.amazon.lastmile.kotlin.inject.anvil.compile
 import software.amazon.lastmile.kotlin.inject.anvil.isOk
 
-@OptIn(ExperimentalCompilerApi::class)
 class ContributesMapMultibindingProcessorTest {
 
+    // https://github.com/cashapp/burst/issues/76
+    enum class MapKeyValue(val key: KClass<*>, val value: Any) {
+        STRING(StringKey::class, "\"greeter3\"")
+        //        INT(IntKey::class, 1),
+        //        LONG(LongKey::class, 1L),
+        //        CLASS(ClassKey::class, String::class),
+        // TODO custom
+    }
+
+    @Burst
     @Test
-    fun `given StringKey annotation applied with implicit boundType when compiling then generates expected code`() {
+    fun `given MapKey annotation applied with implicit boundType when compiling then generates expected code`(
+        mapKeyAndValue: MapKeyValue
+    ) {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
 
             import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
-            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import dev.whosnickdoglio.inject.multibinding.${mapKeyAndValue.key.simpleName}
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -39,7 +59,7 @@ class ContributesMapMultibindingProcessorTest {
                 fun greet(): String
             }
 
-            @StringKey("greeter3")
+            @${mapKeyAndValue.key.simpleName}(${mapKeyAndValue.value})
             @ContributesMapMultibinding(AppScope::class)
             @Inject
             class GreeterImpl3 : Greeter {
