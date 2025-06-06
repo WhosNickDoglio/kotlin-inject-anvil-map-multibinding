@@ -7,12 +7,6 @@
 [//]: # ([![codecov]&#40;https://codecov.io/gh/WhosNickDoglio/dagger-rules/branch/main/graph/badge.svg?token=wCMZ499cH4&#41;]&#40;https://codecov.io/gh/WhosNickDoglio/dagger-rules&#41;)
 [//]: # ([![Maintainability]&#40;https://api.codeclimate.com/v1/badges/528180026c455cacee93/maintainability&#41;]&#40;https://codeclimate.com/github/WhosNickDoglio/dagger-rules/maintainability&#41;)
 
-
-lint rules
-- must apply to a concrete type that is injected and has a super interface
-- requires a MapKey
-
-
 # License 
 
     MIT License
