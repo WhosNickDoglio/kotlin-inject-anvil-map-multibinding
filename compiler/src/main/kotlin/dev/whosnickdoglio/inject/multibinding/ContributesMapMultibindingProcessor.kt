@@ -36,11 +36,25 @@ import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
  * Given the following
  *
  * ```
+ * @StringKey("greeter1")
+ * @ContributesMapMultibinding(AppScope::class)
+ * @Inject
+ * public class GreeterImpl : Greeter {
+ *     override fun greet(): String = "Hello, World!"
+ * }
  * ```
  *
  * Will generate a file that looks like this
  *
  * ```
+ * @ContributesTo(scope = AppScope::class)
+ * public interface DevWhosnickdoglioInjectMultibindingCounterGreeterImpl {
+ *     @IntoMap
+ *     @Provides
+ *     public fun provideDevWhosnickdoglioInjectMultibindingCounterGreeterImpl(
+ *         `impl`: GreeterImpl
+ *     ): Pair<String, Greeter> = ("greeter1" to `impl`)
+ * }
  * ```
  *
  * @property codeGenerator
