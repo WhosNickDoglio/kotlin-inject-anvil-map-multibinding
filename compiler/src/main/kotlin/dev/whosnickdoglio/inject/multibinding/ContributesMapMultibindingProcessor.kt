@@ -135,14 +135,6 @@ internal class ContributesMapMultibindingProcessor(
         check(clazz.annotations.any { annotation -> annotation.isMapKeyAnnotation() }, lazyMessage)
     }
 
-    private fun KSClassDeclaration.mapKey(): KSAnnotation =
-        annotations.firstOrNull { annotation ->
-            annotation.annotationType.resolve().declaration.isAnnotationPresent(MapKey::class)
-        } ?: error("No MapKey annotation found on ${qualifiedName?.asString()}")
-
-    //    private fun KSClassDeclaration.getContributesMapAnnotation(): KSAnnotation =
-    // annotations.filter
-
     private fun KSAnnotation.mapKeyType(): TypeName =
         when {
             isAnnotation(StringKey::class.requireQualifiedName()) -> String::class.asTypeName()
@@ -153,10 +145,15 @@ internal class ContributesMapMultibindingProcessor(
             // custom mapKey
             else -> (arguments.first().value as KSType).toTypeName()
         }
+}
 
-    private fun KSAnnotation.mapKeyValue(): String {
-        arguments.first()
+private fun KSClassDeclaration.mapKey(): KSAnnotation =
+    annotations.firstOrNull { annotation ->
+        annotation.annotationType.resolve().declaration.isAnnotationPresent(MapKey::class)
+    } ?: error("No MapKey annotation found on ${qualifiedName?.asString()}")
 
-        return arguments.first().value?.toString() ?: error("No value found for MapKey annotation")
-    }
+private fun KSAnnotation.mapKeyValue(): String {
+    arguments.first()
+
+    return arguments.first().value?.toString() ?: error("No value found for MapKey annotation")
 }
