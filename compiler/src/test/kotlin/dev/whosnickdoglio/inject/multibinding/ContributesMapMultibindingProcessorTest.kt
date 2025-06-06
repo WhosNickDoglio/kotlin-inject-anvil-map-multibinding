@@ -5,10 +5,12 @@
 package dev.whosnickdoglio.inject.multibinding
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
+import com.tschuchort.compiletesting.KotlinCompilation
 import java.lang.String
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.valueParameters
@@ -23,7 +25,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.isOk
 class ContributesMapMultibindingProcessorTest {
 
     @Test
-    fun `StringKey with implicit boundType should generate the correct code`() {
+    fun `given StringKey annotation applied with implicit boundType when compiling then generates expected code`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -71,6 +73,172 @@ class ContributesMapMultibindingProcessorTest {
 
             // todo method body
             assertThat(exitCode).isOk()
+        }
+    }
+
+    @Test
+    fun `given multibinding annotation applied when there is no MapKey then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            fun interface Greeter {
+                fun greet(): String
+            }
+
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            class GreeterImpl3 : Greeter {
+                override fun greet(): String = "Hello, World!"
+            }
+
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be annotated with a " +
+                        "MapKey annotation to be annotated with ContributesMapMultibinding."
+                )
+        }
+    }
+
+    @Test
+    fun `given multibinding annotation applied when there is no Inject annotation then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            fun interface Greeter {
+                fun greet(): String
+            }
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class)
+            class GreeterImpl3 : Greeter {
+                override fun greet(): String = "Hello, World!"
+            }
+
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be" +
+                        " annotated with Inject to be annotated with ContributesMapMultibinding."
+                )
+        }
+    }
+
+    @Test
+    fun `given multibinding annotation applied when class is not public then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+
+            fun interface Greeter {
+                fun greet(): String
+            }
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            private class GreeterImpl3 : Greeter {
+                override fun greet(): String = "Hello, World!"
+            }
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be public " +
+                        "to be annotated with ContributesMapMultibinding"
+                )
+        }
+    }
+
+    @Test
+    fun `given multibinding annotation applied when class is abstract class then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+
+            fun interface Greeter {
+                fun greet(): String
+            }
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            abstract class GreeterImpl3 : Greeter {
+                override fun greet(): String = "Hello, World!"
+            }
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be " +
+                        "concrete class to be annotated with ContributesMapMultibinding."
+                )
+        }
+    }
+
+    @Test
+    fun `given multibinding annotation applied when class is an interface then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+
+            fun interface Greeter {
+                fun greet(): String
+            }
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            interface GreeterImpl3 : Greeter {
+                override fun greet(): String = "Hello, World!"
+            }
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be " +
+                        "concrete class to be annotated with ContributesMapMultibinding."
+                )
         }
     }
 }

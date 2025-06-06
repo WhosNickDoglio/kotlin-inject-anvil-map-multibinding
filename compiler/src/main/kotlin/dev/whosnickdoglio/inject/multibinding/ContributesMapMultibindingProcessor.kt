@@ -5,6 +5,7 @@
 package dev.whosnickdoglio.inject.multibinding
 
 import com.google.auto.service.AutoService
+import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
@@ -12,6 +13,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -23,6 +25,8 @@ import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import kotlin.reflect.KClass
+import kotlin.sequences.onEach
+import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContextAware
 import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
 
@@ -56,9 +60,19 @@ internal class ContributesMapMultibindingProcessor(
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver
             .getSymbolsWithAnnotation(ContributesMapMultibinding::class)
-            // TODO error handling
             .filterIsInstance<KSClassDeclaration>()
-            .onEach { clazz -> checkIsPublic(clazz) }
+            .onEach { clazz ->
+                checkIsPublic(
+                    declaration = clazz,
+                    lazyMessage = {
+                        "${clazz.requireQualifiedName()} must be public to " +
+                            "be annotated with ContributesMapMultibinding."
+                    },
+                )
+            }
+            .onEach { clazz -> checkIsConcreteClass(clazz) }
+            .onEach { clazz -> checkHasInjectAnnotation(clazz) }
+            .onEach { clazz -> checkHasMapKeyAnnotation(clazz) }
             .map { clazz -> clazz.toMultibinding() }
             .forEach { binding -> binding.generate(codeGenerator) }
 
@@ -84,6 +98,42 @@ internal class ContributesMapMultibindingProcessor(
                     .map { it.toAnnotationSpec() }
                     .toList(),
         )
+
+    private fun checkIsConcreteClass(
+        clazz: KSClassDeclaration,
+        lazyMessage: () -> String = {
+            "${clazz.requireQualifiedName()} must be concrete class to be annotated with ContributesMapMultibinding."
+        },
+    ) {
+        check(clazz.classKind == ClassKind.CLASS && !clazz.isAbstract(), clazz, lazyMessage)
+    }
+
+    private fun checkHasInjectAnnotation(
+        clazz: KSClassDeclaration,
+        lazyMessage: () -> String = {
+            "${clazz.requireQualifiedName()} must be annotated " +
+                "with Inject to be annotated with ContributesMapMultibinding."
+        },
+    ) {
+        fun KSAnnotation.isInjectAnnotation(): Boolean =
+            annotationType.resolve().declaration.requireQualifiedName() ==
+                Inject::class.requireQualifiedName()
+
+        check(clazz.annotations.any { annotation -> annotation.isInjectAnnotation() }, lazyMessage)
+    }
+
+    private fun checkHasMapKeyAnnotation(
+        clazz: KSClassDeclaration,
+        lazyMessage: () -> String = {
+            "${clazz.requireQualifiedName()} must be annotated with a MapKey " +
+                "annotation to be annotated with ContributesMapMultibinding."
+        },
+    ) {
+        fun KSAnnotation.isMapKeyAnnotation(): Boolean =
+            annotationType.resolve().declaration.isAnnotationPresent(MapKey::class)
+
+        check(clazz.annotations.any { annotation -> annotation.isMapKeyAnnotation() }, lazyMessage)
+    }
 
     private fun KSClassDeclaration.mapKey(): KSAnnotation =
         annotations.firstOrNull { annotation ->
