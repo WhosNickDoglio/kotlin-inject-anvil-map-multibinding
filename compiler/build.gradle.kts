@@ -8,13 +8,10 @@ plugins {
     alias(libs.plugins.burst)
 }
 
-kotlin {
-    compilerOptions {
-        optIn.addAll(
-            //            "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
-            "com.google.devtools.ksp.KspExperimental"
-        )
-    }
+kotlin { compilerOptions { optIn.addAll("com.google.devtools.ksp.KspExperimental") } }
+
+tasks.compileTestKotlin.configure {
+    compilerOptions { optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi") }
 }
 
 dependencies {

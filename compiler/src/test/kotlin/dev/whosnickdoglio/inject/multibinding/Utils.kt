@@ -2,8 +2,6 @@
  * Copyright (C) 2025 Nicholas Doglio
  * SPDX-License-Identifier: MIT
  */
-@file:OptIn(ExperimentalCompilerApi::class)
-
 package dev.whosnickdoglio.inject.multibinding
 
 import assertk.Assert
@@ -11,7 +9,6 @@ import assertk.assertions.contains
 import com.tschuchort.compiletesting.JvmCompilationResult
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import software.amazon.lastmile.kotlin.inject.anvil.capitalize
 
 internal const val TEST_LOOKUP_PACKAGE = "dev.whosnickdoglio.inject"

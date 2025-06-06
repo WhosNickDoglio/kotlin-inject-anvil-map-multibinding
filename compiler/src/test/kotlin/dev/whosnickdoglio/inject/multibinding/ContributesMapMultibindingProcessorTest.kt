@@ -3,12 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 @file:Suppress("JUnitMalformedDeclaration")
-@file:OptIn(ExperimentalCompilerApi::class)
 
-/*
- * Copyright (C) 2025 Nicholas Doglio
- * SPDX-License-Identifier: MIT
- */
 package dev.whosnickdoglio.inject.multibinding
 
 import app.cash.burst.Burst
@@ -25,7 +20,6 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.valueParameters
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Test
 import software.amazon.lastmile.kotlin.inject.anvil.compile
 import software.amazon.lastmile.kotlin.inject.anvil.isOk
