@@ -49,17 +49,12 @@ class ContributesMapMultibindingProcessorTest {
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @${mapKeyAndValue.key.simpleName}(${mapKeyAndValue.value})
             @ContributesMapMultibinding(AppScope::class)
             @Inject
-            class GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
-
+            class GreeterImpl3 : Greeter
             """
                 .trimIndent()
         ) {
@@ -100,16 +95,11 @@ class ContributesMapMultibindingProcessorTest {
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @ContributesMapMultibinding(AppScope::class)
             @Inject
-            class GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
-
+            class GreeterImpl3 : Greeter
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
@@ -132,16 +122,11 @@ class ContributesMapMultibindingProcessorTest {
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @StringKey("greeter3")
             @ContributesMapMultibinding(AppScope::class)
-            class GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
-
+            class GreeterImpl3 : Greeter
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
@@ -165,17 +150,12 @@ class ContributesMapMultibindingProcessorTest {
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @StringKey("greeter3")
             @ContributesMapMultibinding(AppScope::class)
             @Inject
-            private class GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
+            private class GreeterImpl3 : Greeter
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
@@ -199,17 +179,12 @@ class ContributesMapMultibindingProcessorTest {
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @StringKey("greeter3")
             @ContributesMapMultibinding(AppScope::class)
             @Inject
-            abstract class GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
+            abstract class GreeterImpl3 : Greeter
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
@@ -233,17 +208,12 @@ class ContributesMapMultibindingProcessorTest {
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
-
-            fun interface Greeter {
-                fun greet(): String
-            }
+            interface Greeter
 
             @StringKey("greeter3")
             @ContributesMapMultibinding(AppScope::class)
             @Inject
-            interface GreeterImpl3 : Greeter {
-                override fun greet(): String = "Hello, World!"
-            }
+            interface GreeterImpl3 : Greeter
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
