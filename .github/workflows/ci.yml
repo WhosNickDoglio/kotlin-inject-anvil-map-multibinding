@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - 'main'
-      - "renovate/**"
     tags-ignore:
       - '**'
 
@@ -50,8 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/setup
-#        with:
-#          encryption_key: ${{ secrets.GRADLE_ENCRYPTION_KEY }} TODO
+        with:
+          encryption_key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Lint
         run: ./gradlew ${{ matrix.command }}
   Tests:
@@ -60,8 +59,8 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/setup
-#        with:
-#          encryption_key: ${{ secrets.GRADLE_ENCRYPTION_KEY }} TODO
+        with:
+          encryption_key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Run Unit Tests
         run: ./gradlew test
 #      - name: Codecov
