@@ -18,6 +18,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
@@ -95,23 +96,25 @@ internal class ContributesMapMultibindingProcessor(
 
     private fun KSClassDeclaration.toMultibinding(): Multibinding =
         Multibinding(
-            origin = this,
+            originFile = requireContainingFile(),
+            originClass = toClassName(),
+            scope = scope().type.toClassName(),
             className =
                 ClassName(
                     packageName = packageName.asString(),
                     simpleNames = listOf(safeClassName),
                 ),
-            scope = scope().type.toClassName(),
+            boundType = superTypes.first().toTypeName(),
+            qualifiers = qualifierSpecs(),
             keyValue = mapKey().mapKeyValue(),
             keyType = mapKey().mapKeyType(),
-            value = this.toClassName(),
-            boundType = this.superTypes.first().toTypeName(),
-            qualifiers =
-                annotations
-                    .filter { it.isKotlinInjectQualifierAnnotation() }
-                    .map { it.toAnnotationSpec() }
-                    .toList(),
         )
+
+    private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> =
+        annotations
+            .filter { annotation -> annotation.isKotlinInjectQualifierAnnotation() }
+            .map { annotation -> annotation.toAnnotationSpec() }
+            .toList()
 
     private fun checkIsConcreteClass(
         clazz: KSClassDeclaration,
@@ -155,7 +158,7 @@ internal class ContributesMapMultibindingProcessor(
             isAnnotation(IntKey::class.requireQualifiedName()) -> Int::class.asTypeName()
             isAnnotation(LongKey::class.requireQualifiedName()) -> Long::class.asTypeName()
             isAnnotation(ClassKey::class.requireQualifiedName()) ->
-                KClass::class.asTypeName() // TOOD
+                KClass::class.asTypeName() // TODO
             // custom mapKey
             else -> (arguments.first().value as KSType).toTypeName()
         }

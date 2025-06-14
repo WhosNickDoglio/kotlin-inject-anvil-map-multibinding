@@ -5,7 +5,7 @@
 package dev.whosnickdoglio.inject.multibinding
 
 import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -21,14 +21,18 @@ import me.tatarka.inject.annotations.Provides
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 internal data class Multibinding(
-    val origin: KSClassDeclaration,
-    val className: ClassName,
+    val originFile: KSFile,
+    val originClass: ClassName,
     val scope: ClassName,
+    val className: ClassName,
+    val boundType: TypeName,
+    // This need to be a list?
+    val qualifiers: List<AnnotationSpec>,
+
+    // TODO
+    // https://github.com/evant/kotlin-inject/issues/409
     val keyValue: String, // TODO type
     val keyType: TypeName,
-    val value: TypeName,
-    val boundType: TypeName,
-    val qualifiers: List<AnnotationSpec>,
 )
 
 /**
@@ -39,23 +43,22 @@ internal data class Multibinding(
 internal fun Multibinding.generate(codeGenerator: CodeGenerator) {
     FileSpec.builder(className)
         .addType(
-            @Suppress("UnsafeCallOnNullableType")
             TypeSpec.interfaceBuilder(className)
+                .addOriginatingKSFile(originFile)
                 .addAnnotation(
                     AnnotationSpec.builder(ContributesTo::class)
                         .addMember("scope = %T::class", scope)
                         .build()
                 )
-                .addOriginatingKSFile(origin.containingFile!!)
                 .addFunction(
                     FunSpec.builder("provide${className.simpleName}")
                         .apply { qualifiers.forEach { addAnnotation(it) } }
                         .addAnnotation(IntoMap::class)
-                        .addParameter("impl", value)
+                        .addParameter("impl", originClass)
                         .addAnnotation(Provides::class)
                         // TODO need to be able to handle all kinds of types here
                         .returns(Pair::class.asTypeName().parameterizedBy(keyType, boundType))
-                        .addStatement("return (%S to `impl`)", keyValue)
+                        .addStatement("return (%S to impl)", keyValue)
                         .build()
                 )
                 .build()
