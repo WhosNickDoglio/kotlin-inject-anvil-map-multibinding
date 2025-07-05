@@ -86,7 +86,7 @@ class ContributesMapMultibindingProcessorTest {
     }
 
     @Test
-    fun `given multibinding annotation applied when there is no MapKey then compilation fails`() {
+    fun `given annotation applied when there is no MapKey then compilation fails`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -113,7 +113,7 @@ class ContributesMapMultibindingProcessorTest {
     }
 
     @Test
-    fun `given multibinding annotation applied when there is no Inject annotation then compilation fails`() {
+    fun `given annotation applied when there is no Inject annotation then compilation fails`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -140,7 +140,7 @@ class ContributesMapMultibindingProcessorTest {
     }
 
     @Test
-    fun `given multibinding annotation applied when class is not public then compilation fails`() {
+    fun `given annotation applied when class is not public then compilation fails`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -169,7 +169,7 @@ class ContributesMapMultibindingProcessorTest {
     }
 
     @Test
-    fun `given multibinding annotation applied when class is abstract class then compilation fails`() {
+    fun `given annotation applied when class is abstract class then compilation fails`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -198,7 +198,7 @@ class ContributesMapMultibindingProcessorTest {
     }
 
     @Test
-    fun `given multibinding annotation applied when class is an interface then compilation fails`() {
+    fun `given annotation applied when class is an interface then compilation fails`() {
         compile(
             """
             package $TEST_LOOKUP_PACKAGE
@@ -223,6 +223,161 @@ class ContributesMapMultibindingProcessorTest {
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be " +
                         "concrete class to be annotated with ContributesMapMultibinding."
                 )
+        }
+    }
+
+    @Test
+    fun `given annotation applied when multiple supers without an explicit boundType then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+            interface Super
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            class GreeterImpl3 : Greeter, Super
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "Multiple super types found for " +
+                        "dev.whosnickdoglio.inject.GreeterImpl3 but no bound type specified"
+                )
+        }
+    }
+
+    @Test
+    fun `given annotation applied with wrong explicit bondType then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+            interface Super
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class, boundType = Super::class)
+            @Inject
+            class GreeterImpl3 : Greeter
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
+                    "Bound type dev.whosnickdoglio.inject.Super " +
+                        "not found in super types of dev.whosnickdoglio.inject.GreeterImpl3"
+                )
+        }
+    }
+
+    @Test
+    fun `given annotation applied when explicit boundType is passed then generate expected code`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+            interface Super
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class, boundType = Greeter::class)
+            @Inject
+            class GreeterImpl3 : Greeter, Super
+            """
+                .trimIndent()
+        ) {
+            val greeter3 = clazz("GreeterImpl3")
+            val greeterSuper = clazz("Greeter")
+            val component = greeter3.generatedComponent
+
+            assertThat(component.packageName).isEqualTo(TEST_LOOKUP_PACKAGE)
+
+            val function = component.kotlin.declaredMemberFunctions.single()
+            assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
+            // TODO do I need to use TypeName for all of this?
+            assertThat(function.valueParameters.single().type.asTypeName())
+                .isEqualTo(greeter3.asTypeName())
+            assertThat(function.returnType.asTypeName())
+                .isEqualTo(
+                    Pair::class.asClassName()
+                        .parameterizedBy(
+                            String::class.asTypeName(),
+                            greeterSuper.kotlin.asTypeName(),
+                        )
+                )
+            assertThat(function).isAnnotatedWith(Provides::class)
+            assertThat(function).isAnnotatedWith(IntoMap::class)
+
+            // todo method body
+            assertThat(exitCode).isOk()
+        }
+    }
+
+    @Test
+    fun `given annotation applied when single super and explicit boundType then code is generated as expected`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+
+            @StringKey("greeter3")
+            @ContributesMapMultibinding(AppScope::class, boundType = Greeter::class)
+            @Inject
+            class GreeterImpl3 : Greeter
+            """
+                .trimIndent()
+        ) {
+            val greeter3 = clazz("GreeterImpl3")
+            val greeterSuper = clazz("Greeter")
+            val component = greeter3.generatedComponent
+
+            assertThat(component.packageName).isEqualTo(TEST_LOOKUP_PACKAGE)
+
+            val function = component.kotlin.declaredMemberFunctions.single()
+            assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
+            // TODO do I need to use TypeName for all of this?
+            assertThat(function.valueParameters.single().type.asTypeName())
+                .isEqualTo(greeter3.asTypeName())
+            assertThat(function.returnType.asTypeName())
+                .isEqualTo(
+                    Pair::class.asClassName()
+                        .parameterizedBy(
+                            String::class.asTypeName(),
+                            greeterSuper.kotlin.asTypeName(),
+                        )
+                )
+            assertThat(function).isAnnotatedWith(Provides::class)
+            assertThat(function).isAnnotatedWith(IntoMap::class)
+
+            // todo method body
+            assertThat(exitCode).isOk()
         }
     }
 }

@@ -21,6 +21,7 @@ import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.UNIT
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -29,6 +30,7 @@ import kotlin.reflect.KClass
 import kotlin.sequences.onEach
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContextAware
+import software.amazon.lastmile.kotlin.inject.anvil.argumentAt
 import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
 
 /**
@@ -104,11 +106,50 @@ internal class ContributesMapMultibindingProcessor(
                     packageName = packageName.asString(),
                     simpleNames = listOf(safeClassName),
                 ),
-            boundType = superTypes.first().toTypeName(),
+            boundType = getBoundType(),
             qualifiers = qualifierSpecs(),
             keyValue = mapKey().mapKeyValue(),
             keyType = mapKey().mapKeyType(),
         )
+
+    private fun KSClassDeclaration.getBoundType(): TypeName {
+        val supers = superTypes.map { it.toTypeName() }.toList().filterNot { it == UNIT }
+        val boundType =
+            (contributesMultibindingAnnotation().argumentAt(name = "boundType")?.value as? KSType)
+                ?.toTypeName()
+
+        if (boundType != null) {
+            check(
+                supers.contains(boundType),
+                lazyMessage = {
+                    "Bound type $boundType not found in super types of ${this.qualifiedName?.asString()}"
+                },
+            )
+        }
+
+        val hasImplicitBoundType = boundType == null || boundType == UNIT
+        val hasSingleSuper = supers.size == 1
+
+        return when {
+            // has explicitly set boundType so we're using that
+            !hasImplicitBoundType -> boundType
+            // Single super with no super means we just use the single super
+            hasImplicitBoundType && hasSingleSuper -> supers.first()
+            else -> {
+                error(
+                    "Multiple super types found for ${this.qualifiedName?.asString()} but no bound type specified"
+                )
+            }
+        }
+    }
+
+    private fun KSClassDeclaration.contributesMultibindingAnnotation(): KSAnnotation =
+        annotations.first { annotation -> annotation.isContributesMapMultibindingAnnotation() }
+
+    private fun KSAnnotation.isContributesMapMultibindingAnnotation(): Boolean {
+        return annotationType.resolve().declaration.requireQualifiedName() ==
+            ContributesMapMultibinding::class.requireQualifiedName()
+    }
 
     private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> =
         annotations
