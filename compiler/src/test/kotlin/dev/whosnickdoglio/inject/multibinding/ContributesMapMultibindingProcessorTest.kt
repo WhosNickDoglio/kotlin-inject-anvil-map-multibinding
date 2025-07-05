@@ -106,8 +106,39 @@ class ContributesMapMultibindingProcessorTest {
         ) {
             assertThat(messages)
                 .contains(
+                    "dev.whosnickdoglio.inject.GreeterImpl3 must be annotated " +
+                        "with a single MapKey annotation to be annotated with ContributesMapMultibinding."
+                )
+        }
+    }
+
+    @Test
+    fun `given annotation applied with multiple mapKey annotations then compilation fails`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.IntKey
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+
+            @StringKey("greeter3")
+            @IntKey(1)
+            @ContributesMapMultibinding(AppScope::class)
+            @Inject
+            class GreeterImpl3 : Greeter
+            """
+                .trimIndent(),
+            exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+        ) {
+            assertThat(messages)
+                .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be annotated with a " +
-                        "MapKey annotation to be annotated with ContributesMapMultibinding."
+                        "single MapKey annotation to be annotated with ContributesMapMultibinding."
                 )
         }
     }

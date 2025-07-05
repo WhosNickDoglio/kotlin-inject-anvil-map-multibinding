@@ -26,7 +26,6 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import kotlin.reflect.KClass
 import kotlin.sequences.onEach
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContextAware
@@ -113,7 +112,11 @@ internal class ContributesMapMultibindingProcessor(
         )
 
     private fun KSClassDeclaration.getBoundType(): TypeName {
-        val supers = superTypes.map { it.toTypeName() }.toList().filterNot { it == UNIT }
+        val supers =
+            superTypes
+                .map { typeRef -> typeRef.toTypeName() }
+                .filterNot { typeName -> typeName == UNIT }
+                .toList()
         val boundType =
             (contributesMultibindingAnnotation().argumentAt(name = "boundType")?.value as? KSType)
                 ?.toTypeName()
@@ -133,7 +136,7 @@ internal class ContributesMapMultibindingProcessor(
         return when {
             // has explicitly set boundType so we're using that
             !hasImplicitBoundType -> boundType
-            // Single super with no super means we just use the single super
+            // Single super with no explicit boundType means we just use the single super
             hasImplicitBoundType && hasSingleSuper -> supers.first()
             else -> {
                 error(
@@ -144,12 +147,9 @@ internal class ContributesMapMultibindingProcessor(
     }
 
     private fun KSClassDeclaration.contributesMultibindingAnnotation(): KSAnnotation =
-        annotations.first { annotation -> annotation.isContributesMapMultibindingAnnotation() }
-
-    private fun KSAnnotation.isContributesMapMultibindingAnnotation(): Boolean {
-        return annotationType.resolve().declaration.requireQualifiedName() ==
-            ContributesMapMultibinding::class.requireQualifiedName()
-    }
+        annotations.first { annotation ->
+            annotation.isAnnotation(ContributesMapMultibinding::class.requireQualifiedName())
+        }
 
     private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> =
         annotations
@@ -183,14 +183,17 @@ internal class ContributesMapMultibindingProcessor(
     private fun checkHasMapKeyAnnotation(
         clazz: KSClassDeclaration,
         lazyMessage: () -> String = {
-            "${clazz.requireQualifiedName()} must be annotated with a MapKey " +
+            "${clazz.requireQualifiedName()} must be annotated with a single MapKey " +
                 "annotation to be annotated with ContributesMapMultibinding."
         },
     ) {
         fun KSAnnotation.isMapKeyAnnotation(): Boolean =
             annotationType.resolve().declaration.isAnnotationPresent(MapKey::class)
 
-        check(clazz.annotations.any { annotation -> annotation.isMapKeyAnnotation() }, lazyMessage)
+        checkNotNull(
+            clazz.annotations.singleOrNull { annotation -> annotation.isMapKeyAnnotation() },
+            lazyMessage,
+        )
     }
 
     private fun KSAnnotation.mapKeyType(): TypeName =
@@ -199,7 +202,7 @@ internal class ContributesMapMultibindingProcessor(
             isAnnotation(IntKey::class.requireQualifiedName()) -> Int::class.asTypeName()
             isAnnotation(LongKey::class.requireQualifiedName()) -> Long::class.asTypeName()
             isAnnotation(ClassKey::class.requireQualifiedName()) ->
-                KClass::class.asTypeName() // TODO
+                (arguments.first().value as KSType).toTypeName()
             // custom mapKey
             else -> (arguments.first().value as KSType).toTypeName()
         }
