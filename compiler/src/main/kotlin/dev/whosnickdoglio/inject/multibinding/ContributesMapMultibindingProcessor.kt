@@ -84,10 +84,10 @@ internal class ContributesMapMultibindingProcessor(
                             "be annotated with ContributesMapMultibinding."
                     },
                 )
+                checkIsConcreteClass(clazz)
+                checkHasInjectAnnotation(clazz)
+                checkHasMapKeyAnnotation(clazz)
             }
-            .onEach { clazz -> checkIsConcreteClass(clazz) }
-            .onEach { clazz -> checkHasInjectAnnotation(clazz) }
-            .onEach { clazz -> checkHasMapKeyAnnotation(clazz) }
             .map { clazz -> clazz.toMultibinding() }
             .forEach { binding -> binding.generate(codeGenerator) }
 
