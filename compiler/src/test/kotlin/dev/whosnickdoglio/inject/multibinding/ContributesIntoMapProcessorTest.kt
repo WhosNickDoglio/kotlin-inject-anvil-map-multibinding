@@ -24,7 +24,7 @@ import org.junit.Test
 import software.amazon.lastmile.kotlin.inject.anvil.compile
 import software.amazon.lastmile.kotlin.inject.anvil.isOk
 
-class ContributesMapMultibindingProcessorTest {
+class ContributesIntoMapProcessorTest {
 
     // https://github.com/cashapp/burst/issues/76
     enum class MapKeyValue(val key: KClass<*>, val value: Any) {
@@ -44,7 +44,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.${mapKeyAndValue.key.simpleName}
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -52,7 +52,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Greeter
 
             @${mapKeyAndValue.key.simpleName}(${mapKeyAndValue.value})
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             class GreeterImpl3 : Greeter
             """
@@ -91,13 +91,13 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
             interface Greeter
 
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             class GreeterImpl3 : Greeter
             """
@@ -107,7 +107,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be annotated " +
-                        "with a single MapKey annotation to be annotated with ContributesMapMultibinding."
+                        "with a single MapKey annotation to be annotated with ContributesIntoMap."
                 )
         }
     }
@@ -118,7 +118,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.IntKey
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
@@ -128,7 +128,7 @@ class ContributesMapMultibindingProcessorTest {
 
             @StringKey("greeter3")
             @IntKey(1)
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             class GreeterImpl3 : Greeter
             """
@@ -138,7 +138,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be annotated with a " +
-                        "single MapKey annotation to be annotated with ContributesMapMultibinding."
+                        "single MapKey annotation to be annotated with ContributesIntoMap."
                 )
         }
     }
@@ -149,14 +149,14 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
             interface Greeter
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             class GreeterImpl3 : Greeter
             """
                 .trimIndent(),
@@ -165,7 +165,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be" +
-                        " annotated with Inject to be annotated with ContributesMapMultibinding."
+                        " annotated with Inject to be annotated with ContributesIntoMap."
                 )
         }
     }
@@ -176,7 +176,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -184,7 +184,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Greeter
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             private class GreeterImpl3 : Greeter
             """
@@ -194,7 +194,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be public " +
-                        "to be annotated with ContributesMapMultibinding"
+                        "to be annotated with ContributesIntoMap"
                 )
         }
     }
@@ -205,7 +205,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -213,7 +213,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Greeter
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             abstract class GreeterImpl3 : Greeter
             """
@@ -223,7 +223,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be " +
-                        "concrete class to be annotated with ContributesMapMultibinding."
+                        "concrete class to be annotated with ContributesIntoMap."
                 )
         }
     }
@@ -234,7 +234,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -242,7 +242,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Greeter
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             interface GreeterImpl3 : Greeter
             """
@@ -252,7 +252,7 @@ class ContributesMapMultibindingProcessorTest {
             assertThat(messages)
                 .contains(
                     "dev.whosnickdoglio.inject.GreeterImpl3 must be " +
-                        "concrete class to be annotated with ContributesMapMultibinding."
+                        "concrete class to be annotated with ContributesIntoMap."
                 )
         }
     }
@@ -263,7 +263,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -272,7 +272,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Super
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class)
+            @ContributesIntoMap(AppScope::class)
             @Inject
             class GreeterImpl3 : Greeter, Super
             """
@@ -293,7 +293,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -302,7 +302,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Super
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class, boundType = Super::class)
+            @ContributesIntoMap(AppScope::class, boundType = Super::class)
             @Inject
             class GreeterImpl3 : Greeter
             """
@@ -323,7 +323,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -332,7 +332,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Super
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class, boundType = Greeter::class)
+            @ContributesIntoMap(AppScope::class, boundType = Greeter::class)
             @Inject
             class GreeterImpl3 : Greeter, Super
             """
@@ -371,7 +371,7 @@ class ContributesMapMultibindingProcessorTest {
             """
             package $TEST_LOOKUP_PACKAGE
 
-            import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
             import dev.whosnickdoglio.inject.multibinding.StringKey
             import me.tatarka.inject.annotations.Inject
             import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -379,7 +379,7 @@ class ContributesMapMultibindingProcessorTest {
             interface Greeter
 
             @StringKey("greeter3")
-            @ContributesMapMultibinding(AppScope::class, boundType = Greeter::class)
+            @ContributesIntoMap(AppScope::class, boundType = Greeter::class)
             @Inject
             class GreeterImpl3 : Greeter
             """

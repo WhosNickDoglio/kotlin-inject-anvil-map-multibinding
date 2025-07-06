@@ -10,7 +10,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.extend.ContributingAnnotatio
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @ContributingAnnotation
-public annotation class ContributesMapMultibinding(
+public annotation class ContributesIntoMap(
     /** The scope in which to include this contributed binding. */
     val scope: KClass<*>,
     /**

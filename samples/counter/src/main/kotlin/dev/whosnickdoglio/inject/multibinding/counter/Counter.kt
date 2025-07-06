@@ -4,7 +4,7 @@
  */
 package dev.whosnickdoglio.inject.multibinding.counter
 
-import dev.whosnickdoglio.inject.multibinding.ContributesMapMultibinding
+import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
 import dev.whosnickdoglio.inject.multibinding.StringKey
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -28,21 +28,21 @@ public interface Greeter {
 }
 
 @StringKey("greeter1")
-@ContributesMapMultibinding(AppScope::class)
+@ContributesIntoMap(AppScope::class)
 @Inject
 public class GreeterImpl : Greeter {
     override fun greet(): String = "Hello, World!"
 }
 
 @StringKey("greeter2")
-@ContributesMapMultibinding(AppScope::class)
+@ContributesIntoMap(AppScope::class)
 @Inject
 public class GreeterImpl2 : Greeter {
     override fun greet(): String = "Hello, Friends!"
 }
 
 @StringKey("greeter3")
-@ContributesMapMultibinding(AppScope::class)
+@ContributesIntoMap(AppScope::class)
 @Inject
 public class GreeterImpl3 : Greeter {
     override fun greet(): String = "Hello, World!"
