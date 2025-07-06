@@ -30,6 +30,7 @@ import kotlin.sequences.onEach
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.ContextAware
 import software.amazon.lastmile.kotlin.inject.anvil.argumentAt
+import software.amazon.lastmile.kotlin.inject.anvil.argumentOfTypeAt
 import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
 
 /**
@@ -151,11 +152,21 @@ internal class ContributesIntoMapProcessor(
             annotation.isAnnotation(ContributesIntoMap::class.requireQualifiedName())
         }
 
-    private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> =
-        annotations
-            .filter { annotation -> annotation.isKotlinInjectQualifierAnnotation() }
-            .map { annotation -> annotation.toAnnotationSpec() }
-            .toList()
+    private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> {
+        val ignoreQualifier =
+            contributesMultibindingAnnotation()
+                .argumentOfTypeAt<Boolean>(this@ContributesIntoMapProcessor, "ignoreQualifier") ==
+                true
+
+        return if (ignoreQualifier) {
+            emptyList()
+        } else {
+            annotations
+                .filter { annotation -> annotation.isKotlinInjectQualifierAnnotation() }
+                .map { annotation -> annotation.toAnnotationSpec() }
+                .toList()
+        }
+    }
 
     private fun checkIsConcreteClass(
         clazz: KSClassDeclaration,

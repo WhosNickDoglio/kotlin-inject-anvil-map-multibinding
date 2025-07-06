@@ -411,4 +411,57 @@ class ContributesIntoMapProcessorTest {
             assertThat(exitCode).isOk()
         }
     }
+
+    @Test
+    fun `given annotation applied when ignoreQualifier is true then generated code does not contain the qualifier`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import me.tatarka.inject.annotations.Qualifier
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+
+            @Qualifier
+            annotation class GreeterQualifier
+
+            @GreeterQualifier
+            @StringKey("greeter3")
+            @ContributesIntoMap(AppScope::class, boundType = Greeter::class, ignoreQualifier = true)
+            @Inject
+            class GreeterImpl3 : Greeter
+            """
+                .trimIndent()
+        ) {
+            val greeter3 = clazz("GreeterImpl3")
+            val greeterSuper = clazz("Greeter")
+            val component = greeter3.generatedComponent
+
+            assertThat(component.packageName).isEqualTo(TEST_LOOKUP_PACKAGE)
+
+            val function = component.kotlin.declaredMemberFunctions.single()
+            assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
+            // TODO do I need to use TypeName for all of this?
+            assertThat(function.valueParameters.single().type.asTypeName())
+                .isEqualTo(greeter3.asTypeName())
+            assertThat(function.returnType.asTypeName())
+                .isEqualTo(
+                    Pair::class.asClassName()
+                        .parameterizedBy(
+                            String::class.asTypeName(),
+                            greeterSuper.kotlin.asTypeName(),
+                        )
+                )
+            assertThat(function).isAnnotatedWith(Provides::class)
+            assertThat(function).isAnnotatedWith(IntoMap::class)
+            assertThat(function).isNotAnnotatedWith("$TEST_LOOKUP_PACKAGE.GreeterQualifier")
+
+            // todo method body
+            assertThat(exitCode).isOk()
+        }
+    }
 }

@@ -6,6 +6,7 @@ package dev.whosnickdoglio.inject.multibinding
 
 import assertk.Assert
 import assertk.assertions.contains
+import assertk.assertions.containsNone
 import com.tschuchort.compiletesting.JvmCompilationResult
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
@@ -30,4 +31,16 @@ internal fun Class<*>.multibindingMethodName(): String =
 
 internal fun Assert<KAnnotatedElement>.isAnnotatedWith(annotation: KClass<*>) {
     transform { element -> element.annotations.map { it.annotationClass } }.contains(annotation)
+}
+
+internal fun Assert<KAnnotatedElement>.isAnnotatedWith(annotation: String) {
+    transform { element -> element.annotations.map { it.annotationClass } }.contains(annotation)
+}
+
+internal fun Assert<KAnnotatedElement>.isNotAnnotatedWith(annotation: KClass<*>) {
+    transform { element -> element.annotations.map { it.annotationClass } }.containsNone(annotation)
+}
+
+internal fun Assert<KAnnotatedElement>.isNotAnnotatedWith(annotation: String) {
+    transform { element -> element.annotations.map { it.annotationClass } }.containsNone(annotation)
 }

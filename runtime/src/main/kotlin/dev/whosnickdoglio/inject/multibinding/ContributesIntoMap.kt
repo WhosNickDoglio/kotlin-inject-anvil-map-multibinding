@@ -24,6 +24,12 @@ public annotation class ContributesIntoMap(
      * must use the same scope.
      */
     val replaces: Array<KClass<*>> = [],
-    // ignoreQualifier?
-    // https://github.com/square/anvil/commit/2e22b27cbbab25a6d96b7540037d741ccf5316de
+    /**
+     * Whether the qualifier for this class should be included in the generated multibinding method.
+     * This parameter is only necessary to use when
+     * [ContributesBinding][software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding] and
+     * [ContributesIntoMap] are used together for the same class. If not, simply remove the
+     * qualifier from the class and don't use this parameter.
+     */
+    val ignoreQualifier: Boolean = false,
 )
