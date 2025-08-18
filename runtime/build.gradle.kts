@@ -5,6 +5,7 @@
 plugins {
     alias(libs.plugins.convention.jvm)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.publish)
     // TODO multiplatform
 }
 
