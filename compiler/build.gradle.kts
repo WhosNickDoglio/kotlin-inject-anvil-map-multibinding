@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.convention.jvm)
     alias(libs.plugins.ksp)
     alias(libs.plugins.burst)
+    alias(libs.plugins.publish)
 }
 
 kotlin { compilerOptions { optIn.addAll("com.google.devtools.ksp.KspExperimental") } }
