@@ -75,7 +75,7 @@ spotless {
 
 tasks.withType<JavaCompile>().configureEach { options.release = libs.versions.jdk.get().toInt() }
 
-tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jdk.get() }
+tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jdkTarget.get() }
 
 // https://docs.gradle.org/8.9/userguide/gradle_daemon.html#daemon_jvm_criteria
 tasks.updateDaemonJvm.configure {
