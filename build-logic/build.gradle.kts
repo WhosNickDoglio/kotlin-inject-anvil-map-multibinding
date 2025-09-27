@@ -23,9 +23,9 @@ kotlin {
     }
 
     compilerOptions {
-        freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdkTarget.get()}")
+        freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdk.get()}")
         allWarningsAsErrors = true
-        jvmTarget = JvmTarget.fromTarget(libs.versions.jdkTarget.get())
+        jvmTarget = JvmTarget.fromTarget(libs.versions.jdk.get())
     }
 }
 
@@ -73,11 +73,9 @@ spotless {
     }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    options.release = libs.versions.jdkTarget.get().toInt()
-}
+tasks.withType<JavaCompile>().configureEach { options.release = libs.versions.jdk.get().toInt() }
 
-tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jdkTarget.get() }
+tasks.withType<Detekt>().configureEach { jvmTarget = libs.versions.jdk.get() }
 
 // https://docs.gradle.org/8.9/userguide/gradle_daemon.html#daemon_jvm_criteria
 tasks.updateDaemonJvm.configure {
