@@ -106,8 +106,8 @@ internal class ContributesIntoMapProcessor(
                 ),
             boundType = getBoundType(),
             qualifiers = qualifierSpecs(),
-            keyValue = mapKey().mapKeyValue(),
-            keyType = mapKey().mapKeyType(),
+            mapKey =
+                Multibinding.MapKey(type = mapKey().mapKeyType(), value = mapKey().mapKeyValue()),
         )
 
     private fun KSClassDeclaration.getBoundType(): TypeName {

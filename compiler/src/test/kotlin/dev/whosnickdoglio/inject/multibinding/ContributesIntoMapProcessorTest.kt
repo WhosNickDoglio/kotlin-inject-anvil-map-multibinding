@@ -26,10 +26,10 @@ class ContributesIntoMapProcessorTest {
 
     // https://github.com/cashapp/burst/issues/76
     enum class MapKeyValue(val key: KClass<*>, val value: Any) {
-        STRING(StringKey::class, "\"greeter3\"")
-        //        INT(IntKey::class, 1),
-        //        LONG(LongKey::class, 1L),
-        //        CLASS(ClassKey::class, String::class),
+        STRING(StringKey::class, "\"greeter3\""),
+        INT(IntKey::class, 1),
+        LONG(LongKey::class, 1L),
+        CLASS(ClassKey::class, "String::class"),
         // TODO custom
     }
 
@@ -67,13 +67,19 @@ class ContributesIntoMapProcessorTest {
             // TODO do I need to use TypeName for all of this?
             assertThat(function.valueParameters.single().type.asTypeName())
                 .isEqualTo(greeter3.asTypeName())
+
+            val keyTypeName =
+                when (mapKeyAndValue) {
+                    MapKeyValue.STRING -> String::class
+                    MapKeyValue.INT -> Int::class
+                    MapKeyValue.LONG -> Long::class
+                    MapKeyValue.CLASS -> mapKeyAndValue.value::class
+                }.asTypeName()
+
             assertThat(function.returnType.asTypeName())
                 .isEqualTo(
                     Pair::class.asClassName()
-                        .parameterizedBy(
-                            String::class.asTypeName(),
-                            greeterSuper.kotlin.asTypeName(),
-                        )
+                        .parameterizedBy(keyTypeName, greeterSuper.kotlin.asTypeName())
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
