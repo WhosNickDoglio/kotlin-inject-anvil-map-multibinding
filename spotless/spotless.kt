@@ -1,4 +1,2 @@
-/*
- * Copyright (C) $YEAR Nicholas Doglio
- * SPDX-License-Identifier: MIT
- */
+// Copyright (C) $YEAR Nicholas Doglio
+// SPDX-License-Identifier: MIT
