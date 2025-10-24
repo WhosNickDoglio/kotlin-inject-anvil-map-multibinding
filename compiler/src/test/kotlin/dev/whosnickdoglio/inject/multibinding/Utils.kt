@@ -24,6 +24,9 @@ val Class<*>.generatedComponent: Class<*>
 internal fun JvmCompilationResult.clazz(name: String): Class<*> =
     classLoader.loadClass("$TEST_LOOKUP_PACKAGE.$name")
 
+val Class<*>.inner: Class<*>
+    get() = classes.single { it.simpleName == "Inner" }
+
 internal fun Class<*>.multibindingMethodName(): String =
     "provide${packageName.split(".").joinToString(separator = "") { it.capitalize() }}$simpleName"
 

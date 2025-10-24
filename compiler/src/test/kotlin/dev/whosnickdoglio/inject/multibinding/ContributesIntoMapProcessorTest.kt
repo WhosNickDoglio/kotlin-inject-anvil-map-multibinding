@@ -468,4 +468,55 @@ class ContributesIntoMapProcessorTest {
             assertThat(exitCode).isOk()
         }
     }
+
+    @Test
+    fun `given annotation is applied on inner class then it generates the expected code`() {
+        compile(
+            """
+            package $TEST_LOOKUP_PACKAGE
+
+            import dev.whosnickdoglio.inject.multibinding.ContributesIntoMap
+            import dev.whosnickdoglio.inject.multibinding.StringKey
+            import me.tatarka.inject.annotations.Inject
+            import me.tatarka.inject.annotations.Qualifier
+            import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+
+            interface Greeter
+
+
+            interface Foo {
+                @StringKey("greeter3")
+                @ContributesIntoMap(AppScope::class, boundType = Greeter::class, ignoreQualifier = true)
+                @Inject
+                class Inner : Greeter
+            }
+            """
+                .trimIndent()
+        ) {
+            val greeter3 = clazz("Foo").inner
+            val greeterSuper = clazz("Greeter")
+            val component = greeter3.generatedComponent
+
+            assertThat(component.packageName).isEqualTo(TEST_LOOKUP_PACKAGE)
+
+            val function = component.kotlin.declaredMemberFunctions.single()
+            assertThat(function.name).isEqualTo("provideDevWhosnickdoglioInjectFooInner")
+            // TODO do I need to use TypeName for all of this?
+            assertThat(function.valueParameters.single().type.asTypeName())
+                .isEqualTo(greeter3.asTypeName())
+            assertThat(function.returnType.asTypeName())
+                .isEqualTo(
+                    Pair::class.asClassName()
+                        .parameterizedBy(
+                            String::class.asTypeName(),
+                            greeterSuper.kotlin.asTypeName(),
+                        )
+                )
+            assertThat(function).isAnnotatedWith(Provides::class)
+            assertThat(function).isAnnotatedWith(IntoMap::class)
+
+            // todo method body
+            assertThat(exitCode).isOk()
+        }
+    }
 }
