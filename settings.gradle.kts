@@ -4,7 +4,6 @@
 rootProject.name = "kotlin-inject-anvil-map-multibinding"
 
 pluginManagement {
-    includeBuild("build-logic")
     repositories {
         exclusiveContent {
             forRepository { google() }

@@ -6,6 +6,7 @@ buildscript { dependencies { classpath(libs.burst) } }
 plugins {
     alias(libs.plugins.dependencyAnalysis)
     alias(libs.plugins.doctor)
+    alias(libs.plugins.convention.jvm) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kotlin.jvm) apply false
@@ -13,7 +14,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.lint) apply false
     alias(libs.plugins.sortDependencies) apply false
-    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.ktfmt) apply false
     alias(libs.plugins.publish) apply false
 }
 
