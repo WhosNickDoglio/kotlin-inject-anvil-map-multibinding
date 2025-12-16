@@ -2,7 +2,7 @@
 agp = "8.13.2"
 dependencyAnalysis = "3.5.1"
 kotlin = "2.2.21"
-ksp = "2.3.3"
+ksp = "2.3.4"
 detekt = "1.23.8"
 jdk = "24"
 jdkTarget = "11"
