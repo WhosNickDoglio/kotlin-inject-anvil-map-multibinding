@@ -2,9 +2,9 @@
 agp = "8.13.2"
 convention = "0.3.0"
 dependencyAnalysis = "3.5.1"
-kotlin = "2.2.21"
+kotlin = "2.3.0"
 ksp = "2.3.4"
-jdk = "24"
+jdk = "25"
 jdkTarget = "11"
 sort = "0.16"
 kotlinpoet = "2.2.0"
@@ -44,5 +44,5 @@ kctfork-ksp = { module = "dev.zacsweers.kctfork:ksp", version = "0.9.0" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 
 junit = { module = "junit:junit", version = "4.13.2" }
-burst = { module = "app.cash.burst:burst-gradle-plugin", version = "2.10.2" }
+burst = { module = "app.cash.burst:burst-gradle-plugin", version = "2.11.0" }
 assertk = { module = "com.willowtreeapps.assertk:assertk", version = "0.28.1" }
