@@ -14,7 +14,7 @@ auto-service = "1.1.1"
 auto-service-ksp = "1.2.0"
 
 [plugins]
-convention-jvm = { id = "dev.whosnickdoglio.convention.kotlin", version = "0.2.0" }
+convention-jvm = { id = "dev.whosnickdoglio.convention.kotlin", version = "0.3.0" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 lint = { id = "com.android.lint", version.ref = "agp" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
