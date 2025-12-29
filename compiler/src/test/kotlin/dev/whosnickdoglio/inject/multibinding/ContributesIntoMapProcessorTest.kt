@@ -8,12 +8,11 @@ import app.cash.burst.Burst
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.asTypeName
 import com.tschuchort.compiletesting.KotlinCompilation
-import java.lang.String
 import kotlin.reflect.KClass
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.valueParameters
 import me.tatarka.inject.annotations.IntoMap
@@ -65,8 +64,8 @@ class ContributesIntoMapProcessorTest {
             val function = component.kotlin.declaredMemberFunctions.single()
             assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
             // TODO do I need to use TypeName for all of this?
-            assertThat(function.valueParameters.single().type.asTypeName())
-                .isEqualTo(greeter3.asTypeName())
+            assertThat(function.valueParameters.single().type)
+                .isEqualTo(greeter3.kotlin.createType())
 
             val keyTypeName =
                 when (mapKeyAndValue) {
@@ -74,12 +73,20 @@ class ContributesIntoMapProcessorTest {
                     MapKeyValue.INT -> Int::class
                     MapKeyValue.LONG -> Long::class
                     MapKeyValue.CLASS -> mapKeyAndValue.value::class
-                }.asTypeName()
+                }
 
-            assertThat(function.returnType.asTypeName())
+            assertThat(function.returnType)
                 .isEqualTo(
-                    Pair::class.asClassName()
-                        .parameterizedBy(keyTypeName, greeterSuper.kotlin.asTypeName())
+                    Pair::class.createType(
+                        arguments =
+                            listOf(
+                                KTypeProjection(KVariance.INVARIANT, keyTypeName.createType()),
+                                KTypeProjection(
+                                    KVariance.INVARIANT,
+                                    greeterSuper.kotlin.createType(),
+                                ),
+                            )
+                    )
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
@@ -350,16 +357,20 @@ class ContributesIntoMapProcessorTest {
 
             val function = component.kotlin.declaredMemberFunctions.single()
             assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
-            // TODO do I need to use TypeName for all of this?
-            assertThat(function.valueParameters.single().type.asTypeName())
-                .isEqualTo(greeter3.asTypeName())
-            assertThat(function.returnType.asTypeName())
+            assertThat(function.valueParameters.single().type)
+                .isEqualTo(greeter3.kotlin.createType())
+            assertThat(function.returnType)
                 .isEqualTo(
-                    Pair::class.asClassName()
-                        .parameterizedBy(
-                            String::class.asTypeName(),
-                            greeterSuper.kotlin.asTypeName(),
-                        )
+                    Pair::class.createType(
+                        arguments =
+                            listOf(
+                                KTypeProjection(KVariance.INVARIANT, String::class.createType()),
+                                KTypeProjection(
+                                    KVariance.INVARIANT,
+                                    greeterSuper.kotlin.createType(),
+                                ),
+                            )
+                    )
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
@@ -397,16 +408,20 @@ class ContributesIntoMapProcessorTest {
 
             val function = component.kotlin.declaredMemberFunctions.single()
             assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
-            // TODO do I need to use TypeName for all of this?
-            assertThat(function.valueParameters.single().type.asTypeName())
-                .isEqualTo(greeter3.asTypeName())
-            assertThat(function.returnType.asTypeName())
+            assertThat(function.valueParameters.single().type)
+                .isEqualTo(greeter3.kotlin.createType())
+            assertThat(function.returnType)
                 .isEqualTo(
-                    Pair::class.asClassName()
-                        .parameterizedBy(
-                            String::class.asTypeName(),
-                            greeterSuper.kotlin.asTypeName(),
-                        )
+                    Pair::class.createType(
+                        arguments =
+                            listOf(
+                                KTypeProjection(KVariance.INVARIANT, String::class.createType()),
+                                KTypeProjection(
+                                    KVariance.INVARIANT,
+                                    greeterSuper.kotlin.createType(),
+                                ),
+                            )
+                    )
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
@@ -449,16 +464,20 @@ class ContributesIntoMapProcessorTest {
 
             val function = component.kotlin.declaredMemberFunctions.single()
             assertThat(function.name).isEqualTo(greeter3.multibindingMethodName())
-            // TODO do I need to use TypeName for all of this?
-            assertThat(function.valueParameters.single().type.asTypeName())
-                .isEqualTo(greeter3.asTypeName())
-            assertThat(function.returnType.asTypeName())
+            assertThat(function.valueParameters.single().type)
+                .isEqualTo(greeter3.kotlin.createType())
+            assertThat(function.returnType)
                 .isEqualTo(
-                    Pair::class.asClassName()
-                        .parameterizedBy(
-                            String::class.asTypeName(),
-                            greeterSuper.kotlin.asTypeName(),
-                        )
+                    Pair::class.createType(
+                        arguments =
+                            listOf(
+                                KTypeProjection(KVariance.INVARIANT, String::class.createType()),
+                                KTypeProjection(
+                                    KVariance.INVARIANT,
+                                    greeterSuper.kotlin.createType(),
+                                ),
+                            )
+                    )
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
@@ -501,16 +520,20 @@ class ContributesIntoMapProcessorTest {
 
             val function = component.kotlin.declaredMemberFunctions.single()
             assertThat(function.name).isEqualTo("provideDevWhosnickdoglioInjectFooInner")
-            // TODO do I need to use TypeName for all of this?
-            assertThat(function.valueParameters.single().type.asTypeName())
-                .isEqualTo(greeter3.asTypeName())
-            assertThat(function.returnType.asTypeName())
+            assertThat(function.valueParameters.single().type)
+                .isEqualTo(greeter3.kotlin.createType())
+            assertThat(function.returnType)
                 .isEqualTo(
-                    Pair::class.asClassName()
-                        .parameterizedBy(
-                            String::class.asTypeName(),
-                            greeterSuper.kotlin.asTypeName(),
-                        )
+                    Pair::class.createType(
+                        arguments =
+                            listOf(
+                                KTypeProjection(KVariance.INVARIANT, String::class.createType()),
+                                KTypeProjection(
+                                    KVariance.INVARIANT,
+                                    greeterSuper.kotlin.createType(),
+                                ),
+                            )
+                    )
                 )
             assertThat(function).isAnnotatedWith(Provides::class)
             assertThat(function).isAnnotatedWith(IntoMap::class)
