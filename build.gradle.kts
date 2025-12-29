@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.dependencyAnalysis)
     alias(libs.plugins.doctor)
     alias(libs.plugins.convention.jvm) apply false
+    alias(libs.plugins.convention.kmp) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kotlin.jvm) apply false
