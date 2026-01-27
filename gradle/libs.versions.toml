@@ -16,7 +16,7 @@ auto-service-ksp = "1.2.0"
 [plugins]
 convention-jvm = { id = "dev.whosnickdoglio.convention.kotlin", version.ref = "convention" }
 convention-kmp = { id = "dev.whosnickdoglio.convention.kmp", version.ref = "convention" }
-detekt = { id = "dev.detekt", version = "2.0.0-alpha.1" }
+detekt = { id = "dev.detekt", version = "2.0.0-alpha.2" }
 lint = { id = "com.android.lint", version.ref = "agp" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version = "0.25.0" }
