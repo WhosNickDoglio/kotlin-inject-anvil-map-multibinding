@@ -2,7 +2,7 @@
 agp = "9.0.0"
 convention = "0.3.0"
 dependencyAnalysis = "3.5.1"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 ksp = "2.3.5"
 jdk = "25"
 jdkTarget = "11"
