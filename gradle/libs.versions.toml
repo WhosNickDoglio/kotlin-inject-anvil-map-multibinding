@@ -1,5 +1,5 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
 convention = "0.3.0"
 dependencyAnalysis = "3.6.1"
 kotlin = "2.3.10"
