@@ -8,7 +8,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.extend.ContributingAnnotatio
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @ContributingAnnotation
-public annotation class ContributesIntoMap(
+public annotation class ContributesMultibinding(
     /** The scope in which to include this contributed binding. */
     val scope: KClass<*>,
     /**
@@ -29,7 +29,7 @@ public annotation class ContributesIntoMap(
      * Whether the qualifier for this class should be included in the generated multibinding method.
      * This parameter is only necessary to use when
      * [ContributesBinding][software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding] and
-     * [ContributesIntoMap] are used together for the same class. If not, simply remove the
+     * [ContributesMultibinding] are used together for the same class. If not, simply remove the
      * qualifier from the class and don't use this parameter.
      */
     val ignoreQualifier: Boolean = false,

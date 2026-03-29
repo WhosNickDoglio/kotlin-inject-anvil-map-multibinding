@@ -38,7 +38,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
  *
  * ```
  * @StringKey("greeter1")
- * @ContributesIntoMap(AppScope::class)
+ * @ContributesMultibinding(AppScope::class)
  * @Inject
  * public class GreeterImpl : Greeter {
  *     override fun greet(): String = "Hello, World!"
@@ -54,14 +54,14 @@ import software.amazon.lastmile.kotlin.inject.anvil.requireQualifiedName
  *     @Provides
  *     public fun provideDevWhosnickdoglioInjectMultibindingCounterGreeterImpl(
  *         `impl`: GreeterImpl
- *     ): Pair<String, Greeter> = ("greeter1" to `impl`)
+ *     ): Pair<String, Greeter> = ("greeter1" to `impl`)º
  * }
  * ```
  *
  * @property codeGenerator
  * @property logger
  */
-internal class ContributesIntoMapProcessor(
+internal class ContributesMultibindingProcessor(
     private val codeGenerator: CodeGenerator,
     override val logger: KSPLogger,
 ) : SymbolProcessor, ContextAware {
@@ -69,19 +69,19 @@ internal class ContributesIntoMapProcessor(
     @AutoService(SymbolProcessorProvider::class)
     internal class Provider : SymbolProcessorProvider {
         override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor =
-            ContributesIntoMapProcessor(environment.codeGenerator, environment.logger)
+            ContributesMultibindingProcessor(environment.codeGenerator, environment.logger)
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver
-            .getSymbolsWithAnnotation(ContributesIntoMap::class)
+            .getSymbolsWithAnnotation(ContributesMultibinding::class)
             .filterIsInstance<KSClassDeclaration>()
             .onEach { clazz ->
                 checkIsPublic(
                     declaration = clazz,
                     lazyMessage = {
                         "${clazz.requireQualifiedName()} must be public to " +
-                            "be annotated with ContributesIntoMap."
+                            "be annotated with ContributesMultibinding."
                     },
                 )
                 checkIsConcreteClass(clazz)
@@ -147,14 +147,16 @@ internal class ContributesIntoMapProcessor(
 
     private fun KSClassDeclaration.contributesMultibindingAnnotation(): KSAnnotation =
         annotations.first { annotation ->
-            annotation.isAnnotation(ContributesIntoMap::class.requireQualifiedName())
+            annotation.isAnnotation(ContributesMultibinding::class.requireQualifiedName())
         }
 
     private fun KSClassDeclaration.qualifierSpecs(): List<AnnotationSpec> {
         val ignoreQualifier =
             contributesMultibindingAnnotation()
-                .argumentOfTypeAt<Boolean>(this@ContributesIntoMapProcessor, "ignoreQualifier") ==
-                true
+                .argumentOfTypeAt<Boolean>(
+                    this@ContributesMultibindingProcessor,
+                    "ignoreQualifier",
+                ) == true
 
         return if (ignoreQualifier) {
             emptyList()
@@ -169,7 +171,7 @@ internal class ContributesIntoMapProcessor(
     private fun checkIsConcreteClass(
         clazz: KSClassDeclaration,
         lazyMessage: () -> String = {
-            "${clazz.requireQualifiedName()} must be concrete class to be annotated with ContributesIntoMap."
+            "${clazz.requireQualifiedName()} must be concrete class to be annotated with ContributesMultibinding."
         },
     ) {
         check(clazz.classKind == ClassKind.CLASS && !clazz.isAbstract(), clazz, lazyMessage)
@@ -179,7 +181,7 @@ internal class ContributesIntoMapProcessor(
         clazz: KSClassDeclaration,
         lazyMessage: () -> String = {
             "${clazz.requireQualifiedName()} must be annotated " +
-                "with Inject to be annotated with ContributesIntoMap."
+                "with Inject to be annotated with ContributesMultibinding."
         },
     ) {
         fun KSAnnotation.isInjectAnnotation(): Boolean =
@@ -193,7 +195,7 @@ internal class ContributesIntoMapProcessor(
         clazz: KSClassDeclaration,
         lazyMessage: () -> String = {
             "${clazz.requireQualifiedName()} must be annotated with a single MapKey " +
-                "annotation to be annotated with ContributesIntoMap."
+                "annotation to be annotated with ContributesMultibinding."
         },
     ) {
         fun KSAnnotation.isMapKeyAnnotation(): Boolean =
