@@ -6,6 +6,7 @@ buildscript { dependencies { classpath(libs.burst) } }
 plugins {
     alias(libs.plugins.dependencyAnalysis)
     alias(libs.plugins.doctor)
+    alias(libs.plugins.autoservice) apply false
     alias(libs.plugins.convention.jvm) apply false
     alias(libs.plugins.convention.kmp) apply false
     alias(libs.plugins.detekt) apply false

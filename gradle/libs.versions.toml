@@ -5,13 +5,11 @@ dependencyAnalysis = "3.6.1"
 kotlin = "2.3.20"
 ksp = "2.3.6"
 jdk = "25"
-jdkTarget = "11"
+jdkTarget = "17"
 sort = "0.16"
 kotlinpoet = "2.3.0"
 kotlin-inject = "0.9.0"
 kotlin-inject-anvil = "0.1.7"
-auto-service = "1.1.1"
-auto-service-ksp = "1.2.0"
 
 [plugins]
 convention-jvm = { id = "dev.whosnickdoglio.convention.kotlin", version.ref = "plugin" }
@@ -28,13 +26,12 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sort" }
 publish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
+autoservice = { id = "com.fueledbycaffeine.autoservice", version = "0.1.4" }
 burst = { id = "app.cash.burst" }
 
 [libraries]
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
-auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "auto-service" }
-auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "auto-service-ksp" }
 kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
 kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlin-inject" }
 kotlin-inject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlin-inject-anvil" }

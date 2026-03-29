@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 plugins {
     alias(libs.plugins.convention.jvm)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.burst)
     alias(libs.plugins.publish)
+    alias(libs.plugins.autoservice)
 }
 
 kotlin { compilerOptions { optIn.addAll("com.google.devtools.ksp.KspExperimental") } }
@@ -23,12 +23,8 @@ dependencies {
     implementation(libs.ksp)
     implementation(projects.runtime)
 
-    compileOnly(libs.auto.service.annotations)
-
     testImplementation(testFixtures(libs.kotlin.inject.anvil.compiler.utils))
     testImplementation(libs.assertk)
     testImplementation(libs.junit)
     testImplementation(libs.kctfork.ksp)
-
-    ksp(libs.auto.service.ksp)
 }
