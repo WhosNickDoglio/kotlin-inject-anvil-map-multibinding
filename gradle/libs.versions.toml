@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.0"
 plugin = "0.3.0"
-dependencyAnalysis = "3.9.0"
+dependencyAnalysis = "3.10.0"
 kotlin = "2.3.21"
 ksp = "2.3.7"
 jdk = "25"
