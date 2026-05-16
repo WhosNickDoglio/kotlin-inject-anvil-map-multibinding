@@ -48,6 +48,8 @@ develocity {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 // lint checks
-// sample
 include("runtime")
 include("compiler")
+include(":samples:animals:androidApp")
+include(":samples:animals:shared")
+include(":samples:animals:desktopApp")
