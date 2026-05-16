@@ -52,4 +52,3 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 // sample
 include("runtime")
 include("compiler")
-include("samples:counter")
