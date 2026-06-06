@@ -21,6 +21,10 @@ plugins {
     alias(libs.plugins.publish) apply false
 }
 
+doctor {
+    javaHome { failOnError = false }
+}
+
 // https://docs.gradle.org/8.9/userguide/gradle_daemon.html#daemon_jvm_criteria
 tasks.updateDaemonJvm.configure {
     languageVersion = JavaLanguageVersion.of(libs.versions.jdk.get())
