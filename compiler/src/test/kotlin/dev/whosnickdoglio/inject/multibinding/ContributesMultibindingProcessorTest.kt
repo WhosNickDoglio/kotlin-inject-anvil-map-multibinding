@@ -53,7 +53,8 @@ class ContributesMultibindingProcessorTest {
             @Inject
             class GreeterImpl3 : Greeter
             """
-                .trimIndent()
+                .trimIndent(),
+            allWarningsAsErrors = false,
         ) {
             val greeter3 = clazz("GreeterImpl3")
             val greeterSuper = clazz("Greeter")
@@ -114,6 +115,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -145,6 +147,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -172,6 +175,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -201,6 +205,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -230,6 +235,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -259,6 +265,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -289,6 +296,7 @@ class ContributesMultibindingProcessorTest {
             """
                 .trimIndent(),
             exitCode = KotlinCompilation.ExitCode.COMPILATION_ERROR,
+            allWarningsAsErrors = false,
         ) {
             assertThat(messages)
                 .contains(
@@ -347,7 +355,8 @@ class ContributesMultibindingProcessorTest {
             @Inject
             class GreeterImpl3 : Greeter, Super
             """
-                .trimIndent()
+                .trimIndent(),
+            allWarningsAsErrors = false,
         ) {
             val greeter3 = clazz("GreeterImpl3")
             val greeterSuper = clazz("Greeter")
@@ -398,7 +407,8 @@ class ContributesMultibindingProcessorTest {
             @Inject
             class GreeterImpl3 : Greeter
             """
-                .trimIndent()
+                .trimIndent(),
+            allWarningsAsErrors = false,
         ) {
             val greeter3 = clazz("GreeterImpl3")
             val greeterSuper = clazz("Greeter")
@@ -454,7 +464,8 @@ class ContributesMultibindingProcessorTest {
             @Inject
             class GreeterImpl3 : Greeter
             """
-                .trimIndent()
+                .trimIndent(),
+            allWarningsAsErrors = false,
         ) {
             val greeter3 = clazz("GreeterImpl3")
             val greeterSuper = clazz("Greeter")
@@ -510,7 +521,8 @@ class ContributesMultibindingProcessorTest {
                 class Inner : Greeter
             }
             """
-                .trimIndent()
+                .trimIndent(),
+            allWarningsAsErrors = false,
         ) {
             val greeter3 = clazz("Foo").inner
             val greeterSuper = clazz("Greeter")
