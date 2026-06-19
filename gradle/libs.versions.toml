@@ -15,7 +15,7 @@ kotlin-inject-anvil = "0.1.7"
 android-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 convention-jvm = { id = "dev.whosnickdoglio.convention.kotlin", version.ref = "plugin" }
 convention-kmp = { id = "dev.whosnickdoglio.convention.kmp", version.ref = "plugin" }
-detekt = { id = "dev.detekt", version = "2.0.0-alpha.3" }
+detekt = { id = "dev.detekt", version = "2.0.0-alpha.5" }
 lint = { id = "com.android.lint", version.ref = "agp" }
 doctor = { id = "com.osacky.doctor", version = "0.12.1" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version = "0.26.0" }
