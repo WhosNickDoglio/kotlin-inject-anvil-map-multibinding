@@ -14,6 +14,7 @@ tasks.compileTestKotlin.configure {
 }
 
 dependencies {
+    implementation(projects.runtime)
     implementation(libs.kotlin.inject.anvil.compiler.utils)
     implementation(libs.kotlin.inject.anvil.runtime)
     implementation(libs.kotlin.inject.anvil.runtime.optional)
@@ -21,7 +22,6 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlinpoet.ksp)
     implementation(libs.ksp)
-    implementation(projects.runtime)
 
     testImplementation(testFixtures(libs.kotlin.inject.anvil.compiler.utils))
     testImplementation(libs.assertk)
