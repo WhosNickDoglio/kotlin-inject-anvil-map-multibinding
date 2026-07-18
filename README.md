@@ -1,5 +1,7 @@
 # Kotlin-Inject-Anvil Map Multibinding Extension
 
+[Kotlin Inject has entered maintenance mode](https://github.com/vRallev/kotlin-inject-anvil#maintenance-mode), this project is no longer maintained. 
+
 [![CI](https://github.com/WhosNickDoglio/kotlin-inject-anvil-map-multibinding/actions/workflows/ci.yml/badge.svg)](https://github.com/WhosNickDoglio/kotlin-inject-anvil-map-multibinding/actions/workflows/ci.yml)
 [![Snapshot](https://img.shields.io/maven-metadata/v.svg?label=snapshot&metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fdev%2Fwhosnickdoglio%2Fkotlin-inject-anvil-map-multibinding%2Fruntime%2Fmaven-metadata.xml)](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/dev/whosnickdoglio/kotlin-inject-anvil-map-multibinding/runtime)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](.github/CODE_OF_CONDUCT.md)
